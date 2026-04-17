@@ -30,5 +30,10 @@ export const updateBar = (id: number, dto: UpdateBarDto): Promise<Bar> =>
     body: JSON.stringify(dto),
   }).then(handleResponse<Bar>);
 
-export const deleteBar = (id: number): Promise<void> =>
-  fetch(`${BASE}/${id}`, { method: 'DELETE' }).then(handleResponse<void>);
+export const deleteBar = async (id: number): Promise<void> => {
+  const res = await fetch(`${BASE}/${id}`, { method: 'DELETE' });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || res.statusText);
+  }
+};

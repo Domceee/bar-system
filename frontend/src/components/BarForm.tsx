@@ -37,26 +37,56 @@ export default function BarForm({ initial, onSubmit, onCancel, error }: Props) {
   }
 
   function displayForm() {
+    const displayedError = validationError ?? error;
+
     return (
-      <div>
-        <h2>{initial ? 'Edit Bar' : 'Add Bar'}</h2>
-        {(validationError || error) && (
-          <p style={{ color: 'red' }}>{validationError ?? error}</p>
-        )}
-        <div>
-          <label>Name</label>
-          <input value={name} onChange={e => setName(e.target.value)} />
+      <div className="bar-form-page">
+        <div className="bar-form">
+          <h2 className="bar-form__title">
+            {initial ? <>Edit <span>Bar</span></> : <>New <span>Bar</span></>}
+          </h2>
+
+          {displayedError && (
+            <div className="bar-form__error">{displayedError}</div>
+          )}
+
+          <div className="bar-form__field">
+            <label className="bar-form__label">Name</label>
+            <input
+              className="bar-form__input"
+              placeholder="e.g. The Purple Lounge"
+              value={name}
+              onChange={e => setName(e.target.value)}
+            />
+          </div>
+
+          <div className="bar-form__field">
+            <label className="bar-form__label">X Coord</label>
+            <input
+              className="bar-form__input"
+              placeholder="e.g. 54.6872"
+              value={xCoord}
+              onChange={e => setXCoord(e.target.value)}
+            />
+          </div>
+
+          <div className="bar-form__field">
+            <label className="bar-form__label">Y Coord</label>
+            <input
+              className="bar-form__input"
+              placeholder="e.g. 25.2797"
+              value={yCoord}
+              onChange={e => setYCoord(e.target.value)}
+            />
+          </div>
+
+          <div className="bar-form__actions">
+            <button className="btn btn--ghost" onClick={onCancel}>Cancel</button>
+            <button className="btn btn--primary" onClick={submitForm}>
+              {initial ? 'Save Changes' : 'Add Bar'}
+            </button>
+          </div>
         </div>
-        <div>
-          <label>X Coord</label>
-          <input value={xCoord} onChange={e => setXCoord(e.target.value)} />
-        </div>
-        <div>
-          <label>Y Coord</label>
-          <input value={yCoord} onChange={e => setYCoord(e.target.value)} />
-        </div>
-        <button onClick={submitForm}>{initial ? 'Save' : 'Add'}</button>
-        <button onClick={onCancel}>Cancel</button>
       </div>
     );
   }
