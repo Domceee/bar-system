@@ -6,4 +6,10 @@ public class Bar
     public string Name { get; set; } = string.Empty;
     public double XCoord { get; set; }
     public double YCoord { get; set; }
+    public double Rating { get; set; }
+    public string Address { get; set; } = string.Empty;
+    public TimeOnly OpenTime { get; set; }
+    public TimeOnly CloseTime { get; set; }
+
+    public Bar SelectBar() => this;
 }

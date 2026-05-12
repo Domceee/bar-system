@@ -11,40 +11,24 @@ export default function BarList() {
   const [formMode, setFormMode] = useState<FormMode>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  function displayBars(data: Bar[]) {
-    setBars(data);
-  }
+  function displayBars(data: Bar[]) { setBars(data); }
+  function openUserBars() { fetchBars().then(displayBars); }
 
-  function openUserBars() {
-    fetchBars().then(displayBars);
-  }
+  useEffect(() => { openUserBars(); }, []);
 
-  useEffect(() => {
-    openUserBars();
-  }, []);
-
-  function addBar() {
-    setFormMode({ mode: 'add' });
-  }
-
-  function pressAdd() {
-    addBar();
-  }
+  function addBar() { setFormMode({ mode: 'add' }); }
+  function pressAdd() { addBar(); }
 
   async function editBar(id: number) {
     const bar = await fetchThisBar(id);
     setFormMode({ mode: 'edit', bar });
   }
-
-  function pressEdit(id: number) {
-    editBar(id);
-  }
+  function pressEdit(id: number) { editBar(id); }
 
   async function deleteBar(id: number) {
     await deleteBarApi(id);
     openUserBars();
   }
-
   function pressDelete(id: number) {
     if (!window.confirm('Delete this bar?')) return;
     deleteBar(id);
@@ -53,11 +37,8 @@ export default function BarList() {
   async function handleFormSubmit(data: CreateBarDto) {
     try {
       setSubmitError(null);
-      if (formMode?.mode === 'edit') {
-        await updateBar(formMode.bar.id, data);
-      } else {
-        await createBar(data);
-      }
+      if (formMode?.mode === 'edit') await updateBar(formMode.bar.id, data);
+      else await createBar(data);
       setFormMode(null);
       openUserBars();
     } catch (e: unknown) {
@@ -82,11 +63,14 @@ export default function BarList() {
         <h1 className="bar-list__title"><span>Bars</span></h1>
         <button className="btn btn--primary" onClick={pressAdd}>+ Add Bar</button>
       </div>
-
       <table className="bar-table">
         <thead>
           <tr>
             <th>Name</th>
+            <th>Address</th>
+            <th>Rating</th>
+            <th>Open</th>
+            <th>Close</th>
             <th>X Coord</th>
             <th>Y Coord</th>
             <th>Actions</th>
@@ -94,23 +78,21 @@ export default function BarList() {
         </thead>
         <tbody>
           {bars.length === 0 ? (
-            <tr>
-              <td colSpan={4} className="bar-table__empty">No bars yet — add one to get started.</td>
-            </tr>
+            <tr><td colSpan={8} className="bar-table__empty">No bars yet — add one to get started.</td></tr>
           ) : (
             bars.map(bar => (
               <tr key={bar.id}>
                 <td>{bar.name}</td>
+                <td>{bar.address}</td>
+                <td>{bar.rating}</td>
+                <td>{bar.openTime}</td>
+                <td>{bar.closeTime}</td>
                 <td>{bar.xCoord}</td>
                 <td>{bar.yCoord}</td>
                 <td>
                   <div className="bar-table__actions">
-                    <button className="btn btn--edit btn--icon" onClick={() => pressEdit(bar.id)}>
-                      <Pencil size={15} />
-                    </button>
-                    <button className="btn btn--delete btn--icon" onClick={() => pressDelete(bar.id)}>
-                      <Trash2 size={15} />
-                    </button>
+                    <button className="btn btn--edit btn--icon" onClick={() => pressEdit(bar.id)}><Pencil size={15} /></button>
+                    <button className="btn btn--delete btn--icon" onClick={() => pressDelete(bar.id)}><Trash2 size={15} /></button>
                   </div>
                 </td>
               </tr>

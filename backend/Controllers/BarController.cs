@@ -23,8 +23,6 @@ public class BarController(IBarService barService) : ControllerBase
     public async Task<IActionResult> CreateBar([FromBody] CreateBarDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest("Name is required.");
-
         var bar = await barService.CreateAsync(dto);
         return Ok(bar);
     }
@@ -33,8 +31,6 @@ public class BarController(IBarService barService) : ControllerBase
     public async Task<IActionResult> UpdateBar(int id, [FromBody] UpdateBarDto dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        if (string.IsNullOrWhiteSpace(dto.Name)) return BadRequest("Name is required.");
-
         var bar = await barService.UpdateAsync(id, dto);
         return bar is null ? NotFound() : Ok(bar);
     }

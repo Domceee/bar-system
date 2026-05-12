@@ -16,7 +16,16 @@ public class BarService(AppDbContext db) : IBarService
 
     public async Task<Bar> CreateAsync(CreateBarDto dto)
     {
-        var bar = new Bar { Name = dto.Name, XCoord = dto.XCoord, YCoord = dto.YCoord };
+        var bar = new Bar
+        {
+            Name = dto.Name,
+            XCoord = dto.XCoord,
+            YCoord = dto.YCoord,
+            Rating = dto.Rating,
+            Address = dto.Address,
+            OpenTime = dto.OpenTime,
+            CloseTime = dto.CloseTime
+        };
         db.Bars.Add(bar);
         await db.SaveChangesAsync();
         return bar;
@@ -30,6 +39,10 @@ public class BarService(AppDbContext db) : IBarService
         bar.Name = dto.Name;
         bar.XCoord = dto.XCoord;
         bar.YCoord = dto.YCoord;
+        bar.Rating = dto.Rating;
+        bar.Address = dto.Address;
+        bar.OpenTime = dto.OpenTime;
+        bar.CloseTime = dto.CloseTime;
         await db.SaveChangesAsync();
         return bar;
     }
