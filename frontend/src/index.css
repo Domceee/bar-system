@@ -332,3 +332,76 @@ body { min-height: 100vh; }
 }
 
 .bar-form__actions .btn { flex: 1; }
+
+/* ── Taste Survey ────────────────────────────────────────── */
+.taste-survey__question-text {
+  font-size: 16px;
+  color: var(--text);
+  font-weight: 500;
+  margin: 4px 0 14px;
+  line-height: 1.4;
+}
+
+.taste-survey__options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.taste-survey__option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  border-radius: 8px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-bright);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.taste-survey__option:hover {
+  border-color: var(--purple);
+  background: rgba(168, 85, 247, 0.08);
+}
+
+.taste-survey__option:active { transform: scale(0.99); }
+
+.taste-survey__option--selected {
+  border-color: var(--purple);
+  background: var(--purple-dim);
+  color: var(--purple-bright);
+  box-shadow: var(--purple-glow-sm);
+}
+
+.taste-survey__review {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.taste-survey__review li {
+  padding: 12px 14px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.taste-survey__review strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.taste-survey__review-answer {
+  font-size: 14px;
+  color: var(--text);
+}

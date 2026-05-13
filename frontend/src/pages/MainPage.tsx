@@ -11,6 +11,7 @@ export default function MainPage() {
       </div>
       <button className="btn--primary-lg" onClick={() => navigate('/bars')}>Open Bars</button>
       <button className="btn--primary-lg" onClick={() => navigate('/reservations')}>Make Reservation</button>
+      <button className="btn--primary-lg" onClick={() => navigate('/taste-survey')}>Taste Survey</button>
     </div>
   );
 }
