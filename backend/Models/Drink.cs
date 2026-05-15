@@ -7,6 +7,8 @@ public class Drink
     public DrinkType Type { get; set; }
     public decimal Price { get; set; }
     public DrinkFlavor Flavor { get; set; }
+    public DrinkStrength Strength { get; set; }
+    public DrinkFlavorBalance FlavorBalance { get; set; }
 
     public int BarId { get; set; }
     public Bar Bar { get; set; } = null!;

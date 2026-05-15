@@ -22,6 +22,9 @@ type Stage =
 export default function BarRecPage() {
   const navigate = useNavigate();
   const [stage, setStage] = useState<Stage>({ kind: "idle" });
+  const [currentDistance, setCurrentDistance] = useState(
+    INITIAL_DISTANCE_METERS,
+  );
 
   async function pressStart() {
     const { surveyNeeded } = await userApi.openSurveyForm(USER_ID);
@@ -29,8 +32,9 @@ export default function BarRecPage() {
     if (surveyNeeded) {
       navigate("/taste-survey");
       return;
-    } // cia tada sugris tas back button
+    }
 
+    setCurrentDistance(INITIAL_DISTANCE_METERS);
     requestBarsWithinDistance(INITIAL_DISTANCE_METERS);
   }
 
@@ -51,24 +55,21 @@ export default function BarRecPage() {
       displayError(e instanceof Error ? e.message : "Failed to fetch bars.");
     }
 
-    // o kodel ne cia updateino 17-23
     if (response !== null) {
-      // opt [response == true] — TODO steps 17-43
-      setStage({
-        kind: "results",
-        bars: response.bars,
-        dbBars: response.dbBars,
-      });
+      // opt [response == true] — scoring loop (steps 15-43) runs on backend during this HTTP call
     }
 
-    const allBarsEvaluated = checkAllBarsEvaluated();
+    const allBarsEvaluated = checkAllBarsEvaluated(response);
 
-    if (allBarsEvaluated === false) {
-      // opt [all bars evaluated == false] — TODO steps 44-45 (displayError)
+    if (allBarsEvaluated === false && response !== null) {
+      // opt [all bars evaluated == false] — steps 44-45
+      displayError("Not all bars were evaluated");
     }
 
-    if (allBarsEvaluated === true) {
-      // opt [all bars evaluated == true] — TODO steps 46-48 (sortBarsByCalculatedRating + sortedBars)
+    if (allBarsEvaluated === true && response !== null) {
+      // opt [all bars evaluated == true] — steps 46-48
+      const sortedBars = sortBarsByCalculatedRating(response);
+      setStage({ kind: "results", bars: response.bars, dbBars: sortedBars });
     }
   }
 
@@ -76,13 +77,26 @@ export default function BarRecPage() {
     setStage({ kind: "error", message });
   }
 
-  function checkAllBarsEvaluated(): boolean {
-    // TODO: derive from scoring loop (steps 26-43)
-    return false;
+  function checkAllBarsEvaluated(
+    response: BarsWithinDistanceResponse | null,
+  ): boolean {
+    return response !== null && response.dbBars.length > 0;
+  }
+
+  function sortBarsByCalculatedRating(
+    response: BarsWithinDistanceResponse,
+  ): DbBar[] {
+    return response.dbBars;
   }
 
   function tryAgain() {
-    requestBarsWithinDistance(INITIAL_DISTANCE_METERS);
+    const newDistance = currentDistance + 1000;
+    setCurrentDistance(newDistance);
+    requestBarsWithinDistance(newDistance);
+  }
+
+  function tryAgainError() {
+    requestBarsWithinDistance(currentDistance);
   }
 
   if (stage.kind === "loading") {
@@ -115,7 +129,7 @@ export default function BarRecPage() {
             </button>
             <button
               className="btn btn--primary"
-              onClick={tryAgain}
+              onClick={tryAgainError}
             >
               Try Again
             </button>
@@ -133,11 +147,15 @@ export default function BarRecPage() {
             Recommended <span>Bars</span>
           </h2>
           <p className="bar-form__subtitle">
-            {stage.bars.length} from Google Maps · {stage.dbBars.length} matched in your DB
+            Search radius: {currentDistance / 1000} km · {stage.dbBars.length}{" "}
+            bars found
           </p>
           <ul className="bar-rec-list">
             {stage.dbBars.map((bar, i) => (
-              <li key={bar.id} className="bar-rec-list__item">
+              <li
+                key={bar.id}
+                className="bar-rec-list__item"
+              >
                 <div className="bar-rec-list__header">
                   <span className="bar-rec-list__name">{bar.name}</span>
                   {i === 0 && bar.priority > 0 && (
@@ -145,9 +163,13 @@ export default function BarRecPage() {
                   )}
                 </div>
                 <div className="bar-rec-list__meta">
-                  <span className="bar-rec-list__rating">★ {bar.rating.toFixed(1)}</span>
+                  <span className="bar-rec-list__rating">
+                    ★ {bar.rating.toFixed(1)}
+                  </span>
                   <span className="bar-rec-list__design">{bar.design}</span>
-                  <span className="bar-rec-list__priority">{bar.priority} / 6 match</span>
+                  <span className="bar-rec-list__priority">
+                    {bar.priority} / 10 match
+                  </span>
                 </div>
               </li>
             ))}

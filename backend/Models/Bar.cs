@@ -11,6 +11,8 @@ public class Bar
     public TimeOnly OpenTime { get; set; }
     public TimeOnly CloseTime { get; set; }
     public BarDesign Design { get; set; }
+    public BarAtmosphere Atmosphere { get; set; }
+    public BarSeating Seating { get; set; }
 
     public List<Drink> Drinks { get; set; } = [];
 

@@ -139,5 +139,5 @@ public class ReservationController(AppDbContext db, OpenWeatherInterface openWea
         combinations.Remove(combo);
 
     private static BarDto ToDto(Bar b) =>
-        new(b.Id, b.Name, b.XCoord, b.YCoord, b.Rating, b.Address, b.OpenTime, b.CloseTime, b.Design);
+        new(b.Id, b.Name, b.XCoord, b.YCoord, b.Rating, b.Address, b.OpenTime, b.CloseTime, b.Design, b.Atmosphere, b.Seating);
 }
