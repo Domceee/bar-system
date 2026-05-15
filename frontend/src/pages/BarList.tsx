@@ -16,17 +16,13 @@ export default function BarList() {
   const [bars, setBars] = useState<Bar[]>([]);
   const [formMode, setFormMode] = useState<FormMode>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
   function displayBars(data: Bar[]) {
     setBars(data);
   }
+  function openUserBars() { fetchBars().then(displayBars); }
 
-  function openUserBars() {
-    fetchBars().then(displayBars);
-  }
-
-  useEffect(() => {
-    openUserBars();
-  }, []);
+  useEffect(() => { openUserBars(); }, []);
 
   function addBar() {
     setFormMode({ mode: "add" });
@@ -40,16 +36,12 @@ export default function BarList() {
     const bar = await fetchThisBar(id);
     setFormMode({ mode: "edit", bar });
   }
-
-  function pressEdit(id: number) {
-    editBar(id);
-  }
+  function pressEdit(id: number) { editBar(id); }
 
   async function deleteBar(id: number) {
     await deleteBarApi(id);
     openUserBars();
   }
-
   function pressDelete(id: number) {
     if (!window.confirm("Delete this bar?")) return;
     deleteBar(id);
@@ -91,11 +83,14 @@ export default function BarList() {
           + Add Bar
         </button>
       </div>
-
       <table className="bar-table">
         <thead>
           <tr>
             <th>Name</th>
+            <th>Address</th>
+            <th>Rating</th>
+            <th>Open</th>
+            <th>Close</th>
             <th>X Coord</th>
             <th>Y Coord</th>
             <th>Actions</th>
@@ -104,7 +99,7 @@ export default function BarList() {
         <tbody>
           {bars.length === 0 ? (
             <tr>
-              <td colSpan={4} className="bar-table__empty">
+              <td colSpan={8} className="bar-table__empty">
                 No bars yet — add one to get started.
               </td>
             </tr>
@@ -112,6 +107,10 @@ export default function BarList() {
             bars.map((bar) => (
               <tr key={bar.id}>
                 <td>{bar.name}</td>
+                <td>{bar.address}</td>
+                <td>{bar.rating}</td>
+                <td>{bar.openTime}</td>
+                <td>{bar.closeTime}</td>
                 <td>{bar.xCoord}</td>
                 <td>{bar.yCoord}</td>
                 <td>

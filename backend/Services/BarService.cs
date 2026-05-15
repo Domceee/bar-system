@@ -16,7 +16,19 @@ public class BarService(AppDbContext db) : IBarService
 
     public async Task<Bar> CreateAsync(CreateBarDto dto)
     {
-        var bar = new Bar { Name = dto.Name, XCoord = dto.XCoord, YCoord = dto.YCoord };
+        var bar = new Bar
+        {
+            Name = dto.Name,
+            XCoord = dto.XCoord,
+            YCoord = dto.YCoord,
+            Rating = dto.Rating,
+            Address = dto.Address,
+            OpenTime = dto.OpenTime,
+            CloseTime = dto.CloseTime,
+            Design = dto.Design,
+            Atmosphere = dto.Atmosphere,
+            Seating = dto.Seating
+        };
         db.Bars.Add(bar);
         await db.SaveChangesAsync();
         return bar;
@@ -30,6 +42,13 @@ public class BarService(AppDbContext db) : IBarService
         bar.Name = dto.Name;
         bar.XCoord = dto.XCoord;
         bar.YCoord = dto.YCoord;
+        bar.Rating = dto.Rating;
+        bar.Address = dto.Address;
+        bar.OpenTime = dto.OpenTime;
+        bar.CloseTime = dto.CloseTime;
+        bar.Design = dto.Design;
+        bar.Atmosphere = dto.Atmosphere;
+        bar.Seating = dto.Seating;
         await db.SaveChangesAsync();
         return bar;
     }
@@ -43,4 +62,7 @@ public class BarService(AppDbContext db) : IBarService
         await db.SaveChangesAsync();
         return true;
     }
+
+    public async Task<IEnumerable<Bar>> findBarsWithSameCoordinates() =>
+        await db.Bars.Include(b => b.Drinks).ToListAsync();
 }

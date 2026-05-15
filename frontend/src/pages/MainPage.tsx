@@ -1,16 +1,28 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function MainPage() {
   const navigate = useNavigate();
 
+  function openBarRecommendationPage() {
+    navigate("/bar-recommendation");
+  }
+
   return (
     <div className="main-page">
-      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div
+        style={{
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          gap: "12px",
+        }}
+      >
         <h1 className="main-page__title">
           Bar<span>System</span>
         </h1>
         <p className="main-page__sub">venue management</p>
       </div>
+<<<<<<< HEAD
       <div className="main-page__nav">
         <button className="btn--primary-lg" onClick={() => navigate('/bars')}>
           Open Bars
@@ -19,6 +31,32 @@ export default function MainPage() {
           Blackjack
         </button>
       </div>
+=======
+      <button
+        className="btn--primary-lg"
+        onClick={() => navigate("/bars")}
+      >
+        Open Bars
+      </button>
+      <button
+        className="btn--primary-lg"
+        onClick={() => navigate("/reservations")}
+      >
+        Make Reservation
+      </button>
+      <button
+        className="btn--primary-lg"
+        onClick={openBarRecommendationPage}
+      >
+        Recommend Bars
+      </button>
+      <button
+        className="btn--primary-lg"
+        onClick={() => navigate("/recipes")}
+      >
+        Cocktail Recipes
+      </button>
+>>>>>>> 4e2a57b0275e3df79edbdf0ef911869d606f1b66
     </div>
   );
 }
