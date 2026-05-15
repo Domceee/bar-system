@@ -27,4 +27,11 @@ public class UserController(IUserService userService) : ControllerBase
             ? NotFound($"User {userId} not found")
             : CreatedAtAction(nameof(submit), new { userId }, response);
     }
+
+    [HttpGet("{userId:int}/survey-form")]
+    public async Task<IActionResult> openSurveyForm(int userId)
+    {
+        var surveyNeeded = await userService.openSurveyForm(userId);
+        return Ok(new { surveyNeeded });
+    }
 }

@@ -10,6 +10,9 @@ public class Bar
     public string Address { get; set; } = string.Empty;
     public TimeOnly OpenTime { get; set; }
     public TimeOnly CloseTime { get; set; }
+    public BarDesign Design { get; set; }
+
+    public List<Drink> Drinks { get; set; } = [];
 
     public Bar SelectBar() => this;
 }

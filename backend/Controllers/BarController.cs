@@ -1,12 +1,16 @@
+using backend.Data;
 using backend.DTOs;
+using backend.Models;
+using backend.Services;
 using backend.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BarController(IBarService barService) : ControllerBase
+public class BarController(IBarService barService, GoogleMapsInterface googleMaps, AppDbContext db) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetBars() =>
@@ -40,5 +44,167 @@ public class BarController(IBarService barService) : ControllerBase
     {
         var deleted = await barService.DeleteAsync(id);
         return deleted ? Ok() : NotFound();
+    }
+
+    [HttpPost("within-distance")]
+    public async Task<IActionResult> requestBarsWithinDistance([FromBody] BarsWithinDistanceRequest req)
+    {
+        var distance = req.DistanceMeters;
+        var response = await googleMaps.requestBarsWithinDistance(req.Lat, req.Lon, distance);
+
+        if (!analyzeCode(response))
+        {
+            return BadRequest(new { status = response.Status });
+        }
+
+        var bars = (await barService.findBarsWithSameCoordinates()).ToList();
+
+        if (response.Bars.Count < 20)
+        {
+            var iterations = 0;
+            while (iterations < 10 && response.Bars.Count < 20)
+            {
+                distance = increaseDistance(distance);
+                response = await googleMaps.requestBarsWithinDistance(req.Lat, req.Lon, distance);
+                bars = (await barService.findBarsWithSameCoordinates()).ToList();
+                iterations++;
+            }
+
+            if (iterations == 10)
+            {
+                return BadRequest(new { status = "MAX_ITERATIONS_REACHED" });
+            }
+        }
+
+        var tasteProfile = await db.TasteProfiles
+            .Include(p => p.Answers)
+            .Where(p => p.UserId == req.UserId)
+            .OrderByDescending(p => p.CreatedAt)
+            .FirstOrDefaultAsync();
+
+        var sortedByName = sortBarsByName(bars);
+        var scoredBars = new List<(Bar Bar, int Priority)>();
+
+        foreach (var bar in sortedByName)
+        {
+            var current = bar.SelectBar();
+            var priority = scoreBar(current, tasteProfile, req.Lat, req.Lon);
+            scoredBars.Add((current, priority));
+        }
+
+        var ranked = sortBarsByCalculatedRating(scoredBars);
+
+        var dbBars = ranked
+            .Select(s => new DbBarDto(s.Bar.Id, s.Bar.Name, s.Bar.XCoord, s.Bar.YCoord, s.Bar.Rating, s.Bar.Design.ToString(), s.Priority))
+            .ToList();
+
+        return Ok(response with { DbBars = dbBars });
+    }
+
+    private static bool analyzeCode(BarsWithinDistanceResponse response) => response.Status == "OK";
+
+    private static double increaseDistance(double currentDistance) => currentDistance + 1000;
+
+    private static List<Bar> sortBarsByName(IEnumerable<Bar> bars) =>
+        bars.OrderBy(b => b.Name).ToList();
+
+    private static List<(Bar Bar, int Priority)> sortBarsByCalculatedRating(IEnumerable<(Bar Bar, int Priority)> scored) =>
+        scored
+            .OrderByDescending(s => s.Priority)
+            .ThenByDescending(s => s.Bar.Rating)
+            .ToList();
+
+    private static int increasePriority(int priority) => priority + 1;
+
+    private static int scoreBar(Bar bar, TasteProfile? profile, double userLat, double userLon)
+    {
+        if (profile is null) return 0;
+
+        var answers = profile.Answers.ToDictionary(a => a.QuestionKey, a => a.Answer);
+        var priority = 0;
+
+        if (answers.TryGetValue("budget", out var budget) && hasDrinkInBudget(bar, budget))
+            priority = increasePriority(priority);
+
+        if (answers.TryGetValue("drink_type", out var drinkType) && hasDrinkType(bar, drinkType))
+            priority = increasePriority(priority);
+
+        if (answers.TryGetValue("flavor_profile", out var flavor) && hasDrinkFlavor(bar, flavor))
+            priority = increasePriority(priority);
+
+        if (answers.TryGetValue("bar_distance", out var distancePref) && fitsDistance(bar, distancePref, userLat, userLon))
+            priority = increasePriority(priority);
+
+        if (answers.TryGetValue("bar_rating", out var ratingPref) && meetsRatingMinimum(bar, ratingPref))
+            priority = increasePriority(priority);
+
+        if (answers.TryGetValue("bar_design", out var designPref) && matchesDesign(bar, designPref))
+            priority = increasePriority(priority);
+
+        return priority;
+    }
+
+    private static bool hasDrinkInBudget(Bar bar, string budgetAnswer)
+    {
+        var (min, max) = budgetAnswer switch
+        {
+            "$1-5" => (1m, 5m),
+            "$5-10" => (5m, 10m),
+            "$10-15" => (10m, 15m),
+            "$15-25" => (15m, 25m),
+            "$25+" => (25m, decimal.MaxValue),
+            _ => (0m, decimal.MaxValue)
+        };
+        return bar.Drinks.Any(d => d.Price >= min && d.Price <= max);
+    }
+
+    private static bool hasDrinkType(Bar bar, string typeAnswer)
+    {
+        var normalized = typeAnswer.TrimEnd('s');
+        if (!Enum.TryParse<DrinkType>(normalized, true, out var type)) return false;
+        return bar.Drinks.Any(d => d.Type == type);
+    }
+
+    private static bool hasDrinkFlavor(Bar bar, string flavorAnswer)
+    {
+        if (!Enum.TryParse<DrinkFlavor>(flavorAnswer, true, out var flavor)) return false;
+        return bar.Drinks.Any(d => d.Flavor == flavor);
+    }
+
+    private static bool fitsDistance(Bar bar, string distanceAnswer, double userLat, double userLon)
+    {
+        var distKm = DistanceKm(userLat, userLon, bar.XCoord, bar.YCoord);
+        return distanceAnswer switch
+        {
+            "Under 1 km" => distKm < 1,
+            "1-5 km" => distKm >= 1 && distKm <= 5,
+            "5-15 km" => distKm > 5 && distKm <= 15,
+            "Any distance" => true,
+            _ => true
+        };
+    }
+
+    private static bool meetsRatingMinimum(Bar bar, string ratingAnswer)
+    {
+        if (!int.TryParse(ratingAnswer.Split(' ')[0], out var minRating)) return false;
+        return bar.Rating >= minRating;
+    }
+
+    private static bool matchesDesign(Bar bar, string designAnswer)
+    {
+        if (!Enum.TryParse<BarDesign>(designAnswer, true, out var design)) return false;
+        return bar.Design == design;
+    }
+
+    private static double DistanceKm(double lat1, double lon1, double lat2, double lon2)
+    {
+        const double R = 6371;
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                Math.Cos(lat1 * Math.PI / 180) * Math.Cos(lat2 * Math.PI / 180) *
+                Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        return R * c;
     }
 }

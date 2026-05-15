@@ -17,6 +17,9 @@ async function handleResponse<T>(res: Response): Promise<T> {
 export const nextQuestion = (index: number): Promise<TasteQuestion> =>
   fetch(`${BASE}/next-question/${index}`).then(handleResponse<TasteQuestion>);
 
+export const openSurveyForm = (userId: number): Promise<{ surveyNeeded: boolean }> =>
+  fetch(`${BASE}/${userId}/survey-form`).then(handleResponse<{ surveyNeeded: boolean }>);
+
 export const submit = (
   userId: number,
   request: SubmitTasteProfileRequest,

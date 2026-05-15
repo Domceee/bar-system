@@ -24,7 +24,8 @@ public class BarService(AppDbContext db) : IBarService
             Rating = dto.Rating,
             Address = dto.Address,
             OpenTime = dto.OpenTime,
-            CloseTime = dto.CloseTime
+            CloseTime = dto.CloseTime,
+            Design = dto.Design
         };
         db.Bars.Add(bar);
         await db.SaveChangesAsync();
@@ -43,6 +44,7 @@ public class BarService(AppDbContext db) : IBarService
         bar.Address = dto.Address;
         bar.OpenTime = dto.OpenTime;
         bar.CloseTime = dto.CloseTime;
+        bar.Design = dto.Design;
         await db.SaveChangesAsync();
         return bar;
     }
@@ -56,4 +58,7 @@ public class BarService(AppDbContext db) : IBarService
         await db.SaveChangesAsync();
         return true;
     }
+
+    public async Task<IEnumerable<Bar>> findBarsWithSameCoordinates() =>
+        await db.Bars.Include(b => b.Drinks).ToListAsync();
 }

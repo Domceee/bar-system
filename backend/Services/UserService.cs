@@ -10,16 +10,22 @@ public class UserService(AppDbContext db) : IUserService
 {
     private static readonly List<TasteQuestionDto> TasteQuestions =
     [
-        new("sweetness", "How much do you like sweet flavors?",
-            ["Don't like it", "Neutral", "Love it"], 0),
-        new("bitterness", "How much do you like bitter flavors?",
-            ["Don't like it", "Neutral", "Love it"], 0),
-        new("drink_type", "Which drink do you choose most often?",
-            ["Beer", "Wine", "Cocktail", "Spirits"], 0),
-        new("alcohol_strength", "What strength of drinks do you prefer?",
+        new("budget", "What's your drink budget per drink?",
+            ["$1-5", "$5-10", "$10-15", "$15-25", "$25+"], 0),
+        new("flavor_balance", "Which flavor balance do you prefer?",
+            ["Sweet", "Bitter", "Sour", "Mixed"], 0),
+        new("drink_strength", "What strength of drinks do you prefer?",
             ["Light", "Medium", "Strong"], 0),
+        new("drink_type", "What's your go-to drink?",
+            ["Beer", "Cider", "Cocktails", "Shots", "Wine"], 0),
         new("flavor_profile", "What's your favorite flavor profile?",
-            ["Fruity", "Herbal", "Sweet", "Spicy"], 0)
+            ["Fruity", "Herbal", "Smoky", "Spicy", "Sweet"], 0),
+        new("bar_distance", "How far are you willing to travel for a bar?",
+            ["Under 1 km", "1-5 km", "5-15 km", "Any distance"], 0),
+        new("bar_rating", "What's the minimum bar rating you'd accept?",
+            ["1 star", "2 stars", "3 stars", "4 stars", "5 stars"], 0),
+        new("bar_design", "What kind of bar interior do you prefer?",
+            ["Cozy", "Modern", "Vintage", "Industrial", "Luxurious"], 0)
     ];
 
     public async Task<User> createUser(string username)
@@ -64,4 +70,7 @@ public class UserService(AppDbContext db) : IUserService
                 .Select(a => new TasteAnswerDto(a.QuestionKey, a.Answer))
                 .ToList());
     }
+
+    public async Task<bool> openSurveyForm(int userId) =>
+        !await db.TasteProfiles.AnyAsync(p => p.UserId == userId);
 }

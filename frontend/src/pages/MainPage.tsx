@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 export default function MainPage() {
   const navigate = useNavigate();
 
+  function openBarRecommendationPage() {
+    navigate('/bar-recommendation');
+  }
+
   return (
     <div className="main-page">
       <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -12,6 +16,7 @@ export default function MainPage() {
       <button className="btn--primary-lg" onClick={() => navigate('/bars')}>Open Bars</button>
       <button className="btn--primary-lg" onClick={() => navigate('/reservations')}>Make Reservation</button>
       <button className="btn--primary-lg" onClick={() => navigate('/taste-survey')}>Taste Survey</button>
+      <button className="btn--primary-lg" onClick={openBarRecommendationPage}>Recommend Bars</button>
     </div>
   );
 }

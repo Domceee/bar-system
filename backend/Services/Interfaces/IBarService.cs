@@ -10,4 +10,5 @@ public interface IBarService
     Task<Bar> CreateAsync(CreateBarDto dto);
     Task<Bar?> UpdateAsync(int id, UpdateBarDto dto);
     Task<bool> DeleteAsync(int id);
+    Task<IEnumerable<Bar>> findBarsWithSameCoordinates();
 }
