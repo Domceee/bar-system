@@ -1,0 +1,18 @@
+project: bar-system
+level: 2
+last_updated: 2026-05-15T16:18:29Z
+
+phases:
+  analysis:
+    product-brief: not-started
+    research: not-started
+  planning:
+    prd: not-started
+    tech-spec: optional
+    ux-design: optional
+  solutioning:
+    architecture: not-started
+    epics-stories: not-started
+  implementation:
+    sprint-planning: not-started
+    current-sprint: null

@@ -14,6 +14,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<TasteProfile> TasteProfiles => Set<TasteProfile>();
     public DbSet<TasteAnswer> TasteAnswers => Set<TasteAnswer>();
 
+    public DbSet<Ingredient> Ingredients => Set<Ingredient>();
+    public DbSet<CocktailRecipe> CocktailRecipes => Set<CocktailRecipe>();
+    public DbSet<RecipeIngredient> RecipeIngredients => Set<RecipeIngredient>();
+
     protected override void OnModelCreating(ModelBuilder mb)
     {
         mb.Entity<Reservation>().HasMany(r => r.Tables).WithMany(t => t.Reservations);
@@ -37,5 +41,25 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany(p => p.Answers)
             .HasForeignKey(a => a.TasteProfileId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        mb.Entity<Ingredient>().Property(i => i.Price).HasPrecision(10, 2);
+
+        mb.Entity<CocktailRecipe>()
+            .HasOne(r => r.Author)
+            .WithMany()
+            .HasForeignKey(r => r.AuthorId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        mb.Entity<RecipeIngredient>()
+            .HasOne(ri => ri.Recipe)
+            .WithMany(r => r.RecipeIngredients)
+            .HasForeignKey(ri => ri.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        mb.Entity<RecipeIngredient>()
+            .HasOne(ri => ri.Ingredient)
+            .WithMany()
+            .HasForeignKey(ri => ri.IngredientId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -26,6 +26,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IBarService, BarService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IIngredientService, IngredientService>();
+builder.Services.AddScoped<ICocktailRecipeService, CocktailRecipeService>();
 builder.Services.AddHttpClient<OpenWeatherInterface>();
 builder.Services.AddHttpClient<GoogleMapsInterface>();
 
@@ -204,6 +206,43 @@ using (var scope = app.Services.CreateScope())
             new Table { BarId = bars[0].Id, SeatCount = 4, Status = "available", IsOutside = true },
             new Table { BarId = bars[1].Id, SeatCount = 2, Status = "available", IsOutside = false },
             new Table { BarId = bars[1].Id, SeatCount = 6, Status = "available", IsOutside = false }
+        );
+        db.SaveChanges();
+    }
+
+    if (!db.Ingredients.Any())
+    {
+        db.Ingredients.AddRange(
+            new Ingredient { Name = "Vodka",            Category = IngredientCategory.Spirit,   AbvPercentage = 40, Price = 18.0m },
+            new Ingredient { Name = "Gin",              Category = IngredientCategory.Spirit,   AbvPercentage = 40, Price = 22.0m },
+            new Ingredient { Name = "White Rum",        Category = IngredientCategory.Spirit,   AbvPercentage = 40, Price = 20.0m },
+            new Ingredient { Name = "Dark Rum",         Category = IngredientCategory.Spirit,   AbvPercentage = 40, Price = 24.0m },
+            new Ingredient { Name = "Tequila Blanco",   Category = IngredientCategory.Spirit,   AbvPercentage = 38, Price = 26.0m },
+            new Ingredient { Name = "Bourbon Whiskey",  Category = IngredientCategory.Spirit,   AbvPercentage = 45, Price = 30.0m },
+            new Ingredient { Name = "Rye Whiskey",      Category = IngredientCategory.Spirit,   AbvPercentage = 45, Price = 32.0m },
+            new Ingredient { Name = "Brandy",           Category = IngredientCategory.Spirit,   AbvPercentage = 40, Price = 28.0m },
+            new Ingredient { Name = "Cheap Vodka",      Category = IngredientCategory.Spirit,   AbvPercentage = 37.5, Price = 9.0m },
+            new Ingredient { Name = "Triple Sec",       Category = IngredientCategory.Liqueur,  AbvPercentage = 30, Price = 14.0m },
+            new Ingredient { Name = "Cointreau",        Category = IngredientCategory.Liqueur,  AbvPercentage = 40, Price = 28.0m },
+            new Ingredient { Name = "Campari",          Category = IngredientCategory.Liqueur,  AbvPercentage = 25, Price = 22.0m },
+            new Ingredient { Name = "Aperol",           Category = IngredientCategory.Liqueur,  AbvPercentage = 11, Price = 18.0m },
+            new Ingredient { Name = "Sweet Vermouth",   Category = IngredientCategory.Wine,     AbvPercentage = 16, Price = 12.0m },
+            new Ingredient { Name = "Dry Vermouth",     Category = IngredientCategory.Wine,     AbvPercentage = 18, Price = 12.0m },
+            new Ingredient { Name = "Prosecco",         Category = IngredientCategory.Wine,     AbvPercentage = 11, Price = 14.0m },
+            new Ingredient { Name = "Lime Juice",       Category = IngredientCategory.Juice,    AbvPercentage = 0,  Price = 3.5m },
+            new Ingredient { Name = "Lemon Juice",      Category = IngredientCategory.Juice,    AbvPercentage = 0,  Price = 3.5m },
+            new Ingredient { Name = "Orange Juice",     Category = IngredientCategory.Juice,    AbvPercentage = 0,  Price = 3.0m },
+            new Ingredient { Name = "Cranberry Juice",  Category = IngredientCategory.Juice,    AbvPercentage = 0,  Price = 3.0m },
+            new Ingredient { Name = "Simple Syrup",     Category = IngredientCategory.Syrup,    AbvPercentage = 0,  Price = 2.5m },
+            new Ingredient { Name = "Grenadine",        Category = IngredientCategory.Syrup,    AbvPercentage = 0,  Price = 4.0m },
+            new Ingredient { Name = "Tonic Water",      Category = IngredientCategory.Mixer,    AbvPercentage = 0,  Price = 1.5m },
+            new Ingredient { Name = "Soda Water",       Category = IngredientCategory.Mixer,    AbvPercentage = 0,  Price = 1.0m },
+            new Ingredient { Name = "Ginger Beer",      Category = IngredientCategory.Mixer,    AbvPercentage = 0,  Price = 2.0m },
+            new Ingredient { Name = "Cola",             Category = IngredientCategory.Mixer,    AbvPercentage = 0,  Price = 1.5m },
+            new Ingredient { Name = "Angostura Bitters",Category = IngredientCategory.Bitter,   AbvPercentage = 44.7, Price = 16.0m },
+            new Ingredient { Name = "Orange Bitters",   Category = IngredientCategory.Bitter,   AbvPercentage = 28, Price = 14.0m },
+            new Ingredient { Name = "Mint Leaves",      Category = IngredientCategory.Garnish,  AbvPercentage = 0,  Price = 1.0m },
+            new Ingredient { Name = "Lime Wedge",       Category = IngredientCategory.Garnish,  AbvPercentage = 0,  Price = 0.5m }
         );
         db.SaveChanges();
     }

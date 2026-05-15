@@ -1,0 +1,10 @@
+project_name: bar-system
+project_type: web-app
+project_level: 2
+user_name: Rapolas Jonas Labutis
+user_skill_level: intermediate
+communication_language: English
+document_output_language: English
+planning_artifacts: ./planning-artifacts
+implementation_artifacts: ./implementation-artifacts
+project_knowledge: ./docs

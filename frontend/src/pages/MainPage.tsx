@@ -40,6 +40,12 @@ export default function MainPage() {
       >
         Recommend Bars
       </button>
+      <button
+        className="btn--primary-lg"
+        onClick={() => navigate("/recipes")}
+      >
+        Cocktail Recipes
+      </button>
     </div>
   );
 }
