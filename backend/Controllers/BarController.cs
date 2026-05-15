@@ -59,10 +59,10 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
 
         var bars = (await barService.findBarsWithSameCoordinates()).ToList();
 
-        if (response.Bars.Count < 10)
+        if (response.Bars.Count < 20)
         {
             var iterations = 0;
-            while (iterations < 10 && response.Bars.Count < 10)
+            while (iterations < 10 && response.Bars.Count < 20)
             {
                 distance = increaseDistance(distance);
                 response = await googleMaps.requestBarsWithinDistance(req.Lat, req.Lon, distance);

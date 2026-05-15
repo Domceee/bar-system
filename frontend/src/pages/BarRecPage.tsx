@@ -51,23 +51,19 @@ export default function BarRecPage() {
         distanceMeters,
       );
     } catch (e) {
-      // opt [response == false] — analyzeCode failed (steps 13-14)
+      // (13-14)
       displayError(e instanceof Error ? e.message : "Failed to fetch bars.");
-    }
-
-    if (response !== null) {
-      // opt [response == true] — scoring loop (steps 15-43) runs on backend during this HTTP call
     }
 
     const allBarsEvaluated = checkAllBarsEvaluated(response);
 
     if (allBarsEvaluated === false && response !== null) {
-      // opt [all bars evaluated == false] — steps 44-45
+      // (44-45)
       displayError("Not all bars were evaluated");
     }
 
     if (allBarsEvaluated === true && response !== null) {
-      // opt [all bars evaluated == true] — steps 46-48
+      // (46-48)
       const sortedBars = sortBarsByCalculatedRating(response);
       setStage({ kind: "results", bars: response.bars, dbBars: sortedBars });
     }
