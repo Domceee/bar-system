@@ -6,6 +6,7 @@ namespace backend.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Bar> Bars => Set<Bar>();
+    public DbSet<Drink> Drinks => Set<Drink>();
     public DbSet<Table> Tables => Set<Table>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
 
@@ -16,6 +17,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     protected override void OnModelCreating(ModelBuilder mb)
     {
         mb.Entity<Reservation>().HasMany(r => r.Tables).WithMany(t => t.Reservations);
+
+        mb.Entity<Drink>()
+            .HasOne(d => d.Bar)
+            .WithMany(b => b.Drinks)
+            .HasForeignKey(d => d.BarId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        mb.Entity<Drink>().Property(d => d.Price).HasPrecision(10, 2);
 
         mb.Entity<TasteProfile>()
             .HasOne(p => p.User)

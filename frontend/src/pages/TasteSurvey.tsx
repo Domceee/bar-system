@@ -100,14 +100,18 @@ export default function TasteSurvey() {
           <div className="bar-form__actions">
             <button
               className="btn btn--primary"
-              onClick={() => navigate("/")}
+              onClick={returnToPreviousPage}
             >
-              Back to Home
+              Back
             </button>
           </div>
         </div>
       </div>
     );
+  }
+
+  function returnToPreviousPage() {
+    navigate(-1);
   }
 
   function displayError(message: string) {
@@ -121,9 +125,9 @@ export default function TasteSurvey() {
           <div className="bar-form__actions">
             <button
               className="btn btn--primary"
-              onClick={() => navigate("/")}
+              onClick={returnToPreviousPage}
             >
-              Back to Home
+              Back
             </button>
           </div>
         </div>

@@ -8,4 +8,5 @@ public interface IUserService
     Task<User> createUser(string username);
     TasteQuestionDto? nextQuestion(int index);
     Task<TasteProfileResponse?> submit(int userId, SubmitTasteProfileRequest request);
+    Task<bool> openSurveyForm(int userId);
 }
