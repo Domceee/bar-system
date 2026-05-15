@@ -332,3 +332,311 @@ body { min-height: 100vh; }
 }
 
 .bar-form__actions .btn { flex: 1; }
+
+/* ── Main Page Nav ───────────────────────────────────────── */
+.main-page__nav {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn--primary-lg--green {
+  background: #16a34a;
+  border-color: #4ade80;
+  box-shadow: 0 0 18px rgba(74, 222, 128, 0.4), 0 0 40px rgba(74, 222, 128, 0.15);
+}
+.btn--primary-lg--green:hover {
+  background: #15803d;
+  box-shadow: 0 0 28px rgba(74, 222, 128, 0.6), 0 0 60px rgba(74, 222, 128, 0.25);
+}
+
+/* ── Blackjack Page ──────────────────────────────────────── */
+.bj-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(22, 163, 74, 0.1) 0%, transparent 70%);
+}
+
+.bj-window {
+  width: 100%;
+  max-width: 640px;
+  background: var(--surface);
+  border: 1px solid var(--border-bright);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 0 60px rgba(22, 163, 74, 0.08);
+}
+
+.bj-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.bj-back {
+  font-size: 13px;
+}
+
+.bj-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #fff;
+}
+
+.bj-title span {
+  color: #4ade80;
+  text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+}
+
+.bj-chips {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.bj-chips__label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.bj-chips__value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #4ade80;
+  text-shadow: 0 0 12px rgba(74, 222, 128, 0.5);
+}
+
+/* ── Betting ─────────────────────────────────────────────── */
+.bj-betting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 0;
+}
+
+.bj-betting__label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.bj-bet-quick {
+  display: flex;
+  gap: 10px;
+}
+
+.bj-bet-chip {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--surface-raised);
+  border: 2px solid var(--border-bright);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.bj-bet-chip:hover:not(:disabled) {
+  border-color: #4ade80;
+  color: #4ade80;
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
+}
+
+.bj-bet-chip--active {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: #4ade80 !important;
+  color: #4ade80 !important;
+  box-shadow: 0 0 16px rgba(74, 222, 128, 0.4) !important;
+}
+
+.bj-bet-chip:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.bj-bet-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.bj-bet-input {
+  width: 100px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-bright);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.bj-bet-input:focus {
+  border-color: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+}
+
+.bj-deal-btn {
+  background: #16a34a !important;
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 18px rgba(74, 222, 128, 0.35) !important;
+}
+
+.bj-deal-btn:hover:not(:disabled) {
+  background: #15803d !important;
+  box-shadow: 0 0 28px rgba(74, 222, 128, 0.55) !important;
+}
+
+.bj-deal-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bj-broke {
+  font-size: 13px;
+  color: var(--red);
+}
+
+/* ── Table / Game ────────────────────────────────────────── */
+.bj-table {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bj-hand {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bj-hand__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.bj-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bj-card {
+  width: 62px;
+  height: 88px;
+  background: #fff;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  color: #1a1a2e;
+  border: 1px solid #ddd;
+}
+
+.bj-card--red {
+  color: #dc2626;
+}
+
+.bj-card--hidden {
+  background: #1e1e35;
+  border-color: var(--border-bright);
+  color: var(--text-muted);
+}
+
+.bj-card__rank {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.bj-card__suit {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.bj-card__hidden {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--border-bright);
+}
+
+/* ── Result Banner ───────────────────────────────────────── */
+.bj-result {
+  text-align: center;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+.bj-result--win {
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+}
+
+.bj-result--lose {
+  background: var(--red-dim);
+  color: var(--red);
+  border: 1px solid rgba(248, 113, 113, 0.2);
+  text-shadow: 0 0 16px rgba(248, 113, 113, 0.4);
+}
+
+.bj-result--push {
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  border: 1px solid var(--border-bright);
+}
+
+/* ── Actions ─────────────────────────────────────────────── */
+.bj-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.bj-action-btn {
+  min-width: 120px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ── Misc ────────────────────────────────────────────────── */
+.bj-loading {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.bj-error-msg {
+  color: var(--red);
+  font-size: 14px;
+  margin-bottom: 16px;
+}

@@ -11,9 +11,14 @@ export default function MainPage() {
         </h1>
         <p className="main-page__sub">venue management</p>
       </div>
-      <button className="btn--primary-lg" onClick={() => navigate('/bars')}>
-        Open Bars
-      </button>
+      <div className="main-page__nav">
+        <button className="btn--primary-lg" onClick={() => navigate('/bars')}>
+          Open Bars
+        </button>
+        <button className="btn--primary-lg btn--primary-lg--green" onClick={() => navigate('/blackjack')}>
+          Blackjack
+        </button>
+      </div>
     </div>
   );
 }

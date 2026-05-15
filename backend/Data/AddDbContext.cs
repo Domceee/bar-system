@@ -6,4 +6,5 @@ namespace backend.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Bar> Bars => Set<Bar>();
+    public DbSet<BlackjackProfile> BlackjackProfiles => Set<BlackjackProfile>();
 }

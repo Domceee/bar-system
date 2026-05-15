@@ -25,6 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IBarService, BarService>();
+builder.Services.AddScoped<IBlackjackService, BlackjackService>();
 
 var app = builder.Build();
 
