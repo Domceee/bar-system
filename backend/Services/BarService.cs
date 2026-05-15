@@ -25,7 +25,9 @@ public class BarService(AppDbContext db) : IBarService
             Address = dto.Address,
             OpenTime = dto.OpenTime,
             CloseTime = dto.CloseTime,
-            Design = dto.Design
+            Design = dto.Design,
+            Atmosphere = dto.Atmosphere,
+            Seating = dto.Seating
         };
         db.Bars.Add(bar);
         await db.SaveChangesAsync();
@@ -45,6 +47,8 @@ public class BarService(AppDbContext db) : IBarService
         bar.OpenTime = dto.OpenTime;
         bar.CloseTime = dto.CloseTime;
         bar.Design = dto.Design;
+        bar.Atmosphere = dto.Atmosphere;
+        bar.Seating = dto.Seating;
         await db.SaveChangesAsync();
         return bar;
     }

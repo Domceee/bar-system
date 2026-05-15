@@ -59,10 +59,10 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
 
         var bars = (await barService.findBarsWithSameCoordinates()).ToList();
 
-        if (response.Bars.Count < 20)
+        if (response.Bars.Count < 10)
         {
             var iterations = 0;
-            while (iterations < 10 && response.Bars.Count < 20)
+            while (iterations < 10 && response.Bars.Count < 10)
             {
                 distance = increaseDistance(distance);
                 response = await googleMaps.requestBarsWithinDistance(req.Lat, req.Lon, distance);
@@ -95,6 +95,7 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
         var ranked = sortBarsByCalculatedRating(scoredBars);
 
         var dbBars = ranked
+            .Where(s => DistanceKm(req.Lat, req.Lon, s.Bar.XCoord, s.Bar.YCoord) * 1000 <= req.DistanceMeters)
             .Select(s => new DbBarDto(s.Bar.Id, s.Bar.Name, s.Bar.XCoord, s.Bar.YCoord, s.Bar.Rating, s.Bar.Design.ToString(), s.Priority))
             .ToList();
 
@@ -141,7 +142,59 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
         if (answers.TryGetValue("bar_design", out var designPref) && matchesDesign(bar, designPref))
             priority = increasePriority(priority);
 
+        if (answers.TryGetValue("flavor_balance", out var balance) && hasDrinkFlavorBalance(bar, balance))
+            priority = increasePriority(priority);
+
+        if (answers.TryGetValue("drink_strength", out var strength) && hasDrinkStrength(bar, strength))
+            priority = increasePriority(priority);
+
+        if (answers.TryGetValue("atmosphere", out var atmosphere) && matchesAtmosphere(bar, atmosphere))
+            priority = increasePriority(priority);
+
+        if (answers.TryGetValue("seating", out var seating) && matchesSeating(bar, seating))
+            priority = increasePriority(priority);
+
         return priority;
+    }
+
+    private static bool hasDrinkFlavorBalance(Bar bar, string balanceAnswer)
+    {
+        if (!Enum.TryParse<DrinkFlavorBalance>(balanceAnswer, true, out var balance)) return false;
+        return bar.Drinks.Any(d => d.FlavorBalance == balance);
+    }
+
+    private static bool hasDrinkStrength(Bar bar, string strengthAnswer)
+    {
+        if (!Enum.TryParse<DrinkStrength>(strengthAnswer, true, out var strength)) return false;
+        return bar.Drinks.Any(d => d.Strength == strength);
+    }
+
+    private static bool matchesAtmosphere(Bar bar, string atmosphereAnswer)
+    {
+        var atmosphere = atmosphereAnswer switch
+        {
+            "Quiet & relaxed" => (BarAtmosphere?)BarAtmosphere.Quiet,
+            "Lively chatter" => BarAtmosphere.Lively,
+            "Music & dancing" => BarAtmosphere.Music,
+            "Party energy" => BarAtmosphere.Party,
+            _ => null
+        };
+        return atmosphere.HasValue && bar.Atmosphere == atmosphere.Value;
+    }
+
+    private static bool matchesSeating(Bar bar, string seatingAnswer)
+    {
+        var seating = seatingAnswer switch
+        {
+            "Indoor" => (BarSeating?)BarSeating.Indoor,
+            "Outdoor patio" => BarSeating.Outdoor,
+            "Bar counter" => BarSeating.Counter,
+            "No preference" => BarSeating.NoPreference,
+            _ => null
+        };
+        if (!seating.HasValue) return false;
+        if (seating.Value == BarSeating.NoPreference) return true;
+        return bar.Seating == seating.Value;
     }
 
     private static bool hasDrinkInBudget(Bar bar, string budgetAnswer)
