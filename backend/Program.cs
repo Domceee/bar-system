@@ -25,15 +25,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IBarService, BarService>();
-<<<<<<< HEAD
 builder.Services.AddScoped<IBlackjackService, BlackjackService>();
-=======
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<ICocktailRecipeService, CocktailRecipeService>();
 builder.Services.AddHttpClient<OpenWeatherInterface>();
 builder.Services.AddHttpClient<GoogleMapsInterface>();
->>>>>>> 4e2a57b0275e3df79edbdf0ef911869d606f1b66
 
 var app = builder.Build();
 

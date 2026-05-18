@@ -6,10 +6,7 @@ namespace backend.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Bar> Bars => Set<Bar>();
-<<<<<<< HEAD
     public DbSet<BlackjackProfile> BlackjackProfiles => Set<BlackjackProfile>();
-}
-=======
     public DbSet<Drink> Drinks => Set<Drink>();
     public DbSet<Table> Tables => Set<Table>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
@@ -67,4 +64,3 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
->>>>>>> 4e2a57b0275e3df79edbdf0ef911869d606f1b66

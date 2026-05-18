@@ -22,41 +22,35 @@ export default function MainPage() {
         </h1>
         <p className="main-page__sub">venue management</p>
       </div>
-<<<<<<< HEAD
       <div className="main-page__nav">
-        <button className="btn--primary-lg" onClick={() => navigate('/bars')}>
+        <button className="btn--primary-lg" onClick={() => navigate("/bars")}>
           Open Bars
         </button>
-        <button className="btn--primary-lg btn--primary-lg--green" onClick={() => navigate('/blackjack')}>
+        <button
+          className="btn--primary-lg"
+          onClick={() => navigate("/reservations")}
+        >
+          Make Reservation
+        </button>
+        <button
+          className="btn--primary-lg"
+          onClick={openBarRecommendationPage}
+        >
+          Recommend Bars
+        </button>
+        <button
+          className="btn--primary-lg"
+          onClick={() => navigate("/recipes")}
+        >
+          Cocktail Recipes
+        </button>
+        <button
+          className="btn--primary-lg btn--primary-lg--green"
+          onClick={() => navigate("/blackjack")}
+        >
           Blackjack
         </button>
       </div>
-=======
-      <button
-        className="btn--primary-lg"
-        onClick={() => navigate("/bars")}
-      >
-        Open Bars
-      </button>
-      <button
-        className="btn--primary-lg"
-        onClick={() => navigate("/reservations")}
-      >
-        Make Reservation
-      </button>
-      <button
-        className="btn--primary-lg"
-        onClick={openBarRecommendationPage}
-      >
-        Recommend Bars
-      </button>
-      <button
-        className="btn--primary-lg"
-        onClick={() => navigate("/recipes")}
-      >
-        Cocktail Recipes
-      </button>
->>>>>>> 4e2a57b0275e3df79edbdf0ef911869d606f1b66
     </div>
   );
 }

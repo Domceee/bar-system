@@ -115,7 +115,9 @@ export default function BlackjackGame() {
     let dCards = dealerCards.map(c => ({ ...c, faceDown: false }));
 
     while (handValue(dCards) < 17) {
-      dCards = [...dCards, currentDeck.pop()!];
+      const next = currentDeck.pop();
+      if (!next) break;
+      dCards = [...dCards, { ...next, faceDown: false }];
     }
 
     setDeck(currentDeck);

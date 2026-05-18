@@ -82,11 +82,7 @@ namespace backend.Migrations
                     b.ToTable("Bars");
                 });
 
-<<<<<<< HEAD
             modelBuilder.Entity("backend.Models.BlackjackProfile", b =>
-=======
-            modelBuilder.Entity("backend.Models.CocktailRecipe", b =>
->>>>>>> 4e2a57b0275e3df79edbdf0ef911869d606f1b66
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,9 +90,22 @@ namespace backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-<<<<<<< HEAD
                     b.Property<int>("Chips")
-=======
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BlackjackProfiles");
+                });
+
+            modelBuilder.Entity("backend.Models.CocktailRecipe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
                     b.Property<double>("ABV")
                         .HasColumnType("double precision");
 
@@ -121,14 +130,9 @@ namespace backend.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("Status")
->>>>>>> 4e2a57b0275e3df79edbdf0ef911869d606f1b66
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-<<<<<<< HEAD
-                    b.ToTable("BlackjackProfiles");
-=======
                     b.HasIndex("AuthorId");
 
                     b.ToTable("CocktailRecipes");
@@ -465,7 +469,6 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("TasteProfiles");
->>>>>>> 4e2a57b0275e3df79edbdf0ef911869d606f1b66
                 });
 #pragma warning restore 612, 618
         }
