@@ -37,6 +37,14 @@ export default function ReservationForm({ onCancel, onConfirmed }: Props) {
     else setStep('error');
   }
 
+  function decline() {
+    reset();
+  }
+
+  async function findNearestBar() {
+    await submit({ ...formData, useNearestBar: true });
+  }
+
   async function confirm() {
     if (!proposal?.bar || !proposal.tableIds) return;
     const result = await confirmReservation({
@@ -45,8 +53,12 @@ export default function ReservationForm({ onCancel, onConfirmed }: Props) {
       guestCount: formData.guestCount,
       date: formData.date,
     });
-    setWeather(result.weatherForecast ?? null);
-    setStep('confirmed');
+    if (result.weatherForecast) {
+      setWeather(result.weatherForecast);
+      setStep('confirmed');
+    } else {
+      reset();
+    }
   }
 
   if (step === 'form') {
@@ -96,7 +108,7 @@ export default function ReservationForm({ onCancel, onConfirmed }: Props) {
           <p>Would you like us to find the nearest open bar?</p>
           <div className="bar-form__actions">
             <button className="btn btn--ghost" onClick={reset}>Cancel</button>
-            <button className="btn btn--primary" onClick={() => submit({ ...formData, useNearestBar: true })}>Find Nearest Bar</button>
+            <button className="btn btn--primary" onClick={findNearestBar}>Find Nearest Bar</button>
           </div>
         </div>
       </div>
@@ -113,7 +125,7 @@ export default function ReservationForm({ onCancel, onConfirmed }: Props) {
           <p><strong>Rating:</strong> {proposal.bar.rating}</p>
           <p><strong>Table IDs:</strong> {proposal.tableIds?.join(', ')}</p>
           <div className="bar-form__actions">
-            <button className="btn btn--ghost" onClick={reset}>Decline</button>
+            <button className="btn btn--ghost" onClick={decline}>Decline</button>
             <button className="btn btn--primary" onClick={confirm}>Confirm</button>
           </div>
         </div>

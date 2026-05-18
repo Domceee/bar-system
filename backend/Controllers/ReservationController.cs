@@ -156,18 +156,14 @@ public class ReservationController(AppDbContext db, OpenWeatherInterface openWea
     [HttpPost("confirm")]
     public async Task<IActionResult> Confirm([FromBody] ConfirmReservationDto dto)
     {
-        var reservation = Reservation.Create(dto.BarId, dto.GuestCount, DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc), "pending");
-
         var tables = await db.Tables.Where(t => dto.TableIds.Contains(t.Id)).ToListAsync();
-        reservation.Tables = tables;
-
-        db.Reservations.Add(reservation);
+        foreach (var table in tables)
+            table.UpdateStatus("reserved");
         await db.SaveChangesAsync();
 
-        reservation.UpdateStatus("confirmed");
-        foreach (var table in tables)
-            table.Status = "reserved";
-
+        var reservation = Reservation.Create(dto.BarId, dto.GuestCount, DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc), "confirmed");
+        reservation.Tables = tables;
+        db.Reservations.Add(reservation);
         await db.SaveChangesAsync();
 
         string? weather = null;
