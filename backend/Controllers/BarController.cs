@@ -10,7 +10,7 @@ namespace backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BarController(IBarService barService, GoogleMapsInterface googleMaps, AppDbContext db) : ControllerBase
+public class BarController(IBarService barService, GoogleMapsInterface googleMaps, AppDbContext db, IUserService userService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetBars() =>
@@ -101,6 +101,76 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
 
         return Ok(response with { DbBars = dbBars });
     }
+
+    [HttpPost("fitting-bars")]
+    public async Task<IActionResult> requestFittingBars([FromBody] RequestFittingBarsDto dto)
+    {
+        var allBars = await db.Bars.Include(b => b.Drinks).ToListAsync();
+        var combinedList = new List<int>();
+
+        foreach (var userId in dto.UserIds)
+        {
+            var profile = await userService.getUserTasteProfile(userId);
+
+            if (profile is null) continue;
+
+            var userList = allBars
+                .Select(b => (Bar: b, Score: scoreBar(b, profile, 54.9, 23.9)))
+                .Where(x => x.Score > 0)
+                .OrderByDescending(x => x.Score)
+                .Take(8)
+                .Select(x => x.Bar.Id)
+                .ToList();
+
+            combinedList.AddRange(userList);
+        }
+
+        var selectedBarIds = aggregateBarLists(combinedList);
+        if (!selectedBarIds.Any())
+            selectedBarIds = allBars.Take(4).Select(b => b.Id).ToList();
+
+        var route = new backend.Models.Route { Status = RouteStatus.Draft };
+        db.Routes.Add(route);
+        await db.SaveChangesAsync();
+
+        for (var i = 0; i < selectedBarIds.Count; i++)
+            db.BarsInRoute.Add(new BarInRoute
+            {
+                RouteId = route.Id,
+                BarId = selectedBarIds[i],
+                Order = i + 1,
+                IsLast = i == selectedBarIds.Count - 1
+            });
+
+        await db.SaveChangesAsync();
+
+        var result = await db.BarsInRoute
+            .Include(bir => bir.Bar)
+            .Where(bir => bir.RouteId == route.Id)
+            .OrderBy(bir => bir.Order)
+            .Select(bir => new BarInRouteDto(bir.Id, bir.BarId, bir.Bar.Name, bir.Bar.Address, bir.Order, bir.IsLast, bir.IsCompleted))
+            .ToListAsync();
+
+        return Ok(new RouteDto(route.Id, route.Status.ToString(), result));
+    }
+
+    [HttpGet("{barId:int}/details")]
+    public async Task<IActionResult> fetchBarDetails(int barId)
+    {
+        var bar = await db.Bars.Include(b => b.Drinks).FirstOrDefaultAsync(b => b.Id == barId);
+        return bar is null ? NotFound() : Ok(bar);
+    }
+
+    private static List<int> aggregateBarLists(List<int> combinedList) =>
+        selectMostRepeatingBars(combinedList);
+
+    private static List<int> selectMostRepeatingBars(List<int> combinedList) =>
+        combinedList
+            .GroupBy(id => id)
+            .OrderByDescending(g => g.Count())
+            .Take(5)
+            .Select(g => g.Key)
+            .ToList();
 
     private static bool analyzeCode(BarsWithinDistanceResponse response) => response.Status == "OK";
 

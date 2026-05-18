@@ -8,7 +8,7 @@ import type {
   NearbyBar,
 } from "../types/barRec";
 
-const USER_ID = 1;
+const USER_ID = 99999;
 const USER_LAT = 54.8985;
 const USER_LON = 23.9036;
 const INITIAL_DISTANCE_METERS = 10000;

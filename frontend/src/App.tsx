@@ -6,6 +6,8 @@ import ReservationList from './pages/ReservationList';
 import TasteSurvey from './pages/TasteSurvey';
 import BarRecPage from './pages/BarRecPage';
 import CocktailRecipeList from './pages/CocktailRecipeList';
+import FriendsPage from './pages/FriendsPage';
+import BarRoutePage from './pages/BarRoutePage';
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
         <Route path="/taste-survey" element={<TasteSurvey />} />
         <Route path="/bar-recommendation" element={<BarRecPage />} />
         <Route path="/recipes" element={<CocktailRecipeList />} />
+        <Route path="/friends" element={<FriendsPage />} />
+        <Route path="/bar-route" element={<BarRoutePage />} />
       </Routes>
     </BrowserRouter>
   );
