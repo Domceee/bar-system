@@ -206,7 +206,13 @@ using (var scope = app.Services.CreateScope())
             new Table { BarId = bars[0].Id, SeatCount = 4, Status = "available", IsOutside = false },
             new Table { BarId = bars[0].Id, SeatCount = 4, Status = "available", IsOutside = true },
             new Table { BarId = bars[1].Id, SeatCount = 2, Status = "available", IsOutside = false },
-            new Table { BarId = bars[1].Id, SeatCount = 6, Status = "available", IsOutside = false }
+            new Table { BarId = bars[1].Id, SeatCount = 6, Status = "available", IsOutside = false },
+            new Table { BarId = bars[2].Id, SeatCount = 2, Status = "available", IsOutside = false },
+            new Table { BarId = bars[2].Id, SeatCount = 4, Status = "available", IsOutside = false },
+            new Table { BarId = bars[3].Id, SeatCount = 2, Status = "available", IsOutside = false },
+            new Table { BarId = bars[3].Id, SeatCount = 4, Status = "available", IsOutside = true },
+            new Table { BarId = bars[4].Id, SeatCount = 2, Status = "available", IsOutside = false },
+            new Table { BarId = bars[4].Id, SeatCount = 6, Status = "available", IsOutside = true }
         );
         db.SaveChanges();
     }

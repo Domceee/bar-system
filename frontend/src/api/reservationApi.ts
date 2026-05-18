@@ -1,4 +1,4 @@
-import type { ReservationFormData, ReservationProposal } from '../types/reservation';
+import type { ReservationFormData, ReservationListItem, ReservationProposal, ReservationResponse } from '../types/reservation';
 
 const BASE = 'http://localhost:5029/api/reservation';
 
@@ -28,3 +28,15 @@ export const confirmReservation = (dto: {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   }).then(handleResponse<ReservationProposal>);
+
+export const getReservations = (): Promise<ReservationListItem[]> =>
+  fetch(BASE).then(handleResponse<ReservationListItem[]>);
+
+export const deleteReservation = (id: number): Promise<ReservationResponse> =>
+  fetch(`${BASE}/${id}`, { method: 'DELETE' }).then(handleResponse<ReservationResponse>);
+
+export const cancelReservation = (id: number): Promise<ReservationResponse> =>
+  fetch(`${BASE}/${id}/cancel`, { method: 'PUT' }).then(handleResponse<ReservationResponse>);
+
+export const endReservation = (id: number): Promise<ReservationResponse> =>
+  fetch(`${BASE}/${id}/end`, { method: 'PUT' }).then(handleResponse<ReservationResponse>);
