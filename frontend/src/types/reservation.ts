@@ -16,3 +16,19 @@ export interface ReservationProposal {
   weatherForecast?: string;
   errorMessage?: string;
 }
+
+export interface ReservationListItem {
+  id: number;
+  barId: number;
+  barName: string;
+  guestCount: number;
+  date: string;
+  status: string;
+  tableIds: number[];
+}
+
+export interface ReservationResponse {
+  status: string;
+  message?: string;
+  reservations?: ReservationListItem[];
+}
