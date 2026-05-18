@@ -7,6 +7,14 @@ export default function MainPage() {
     navigate("/bar-recommendation");
   }
 
+  function openFriendsPage() {
+    navigate("/friends");
+  }
+
+  function openBarRoutePage() {
+    navigate("/bar-route");
+  }
+
   return (
     <div className="main-page">
       <div
@@ -49,6 +57,18 @@ export default function MainPage() {
           onClick={() => navigate("/blackjack")}
         >
           Blackjack
+        </button>
+        <button
+          className="btn--primary-lg"
+          onClick={openFriendsPage}
+        >
+          Friends
+        </button>
+        <button
+          className="btn--primary-lg"
+          onClick={openBarRoutePage}
+        >
+          Bar Route
         </button>
       </div>
     </div>

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend.Data;
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260518173003_AddFriendsAndMessages")]
+    partial class AddFriendsAndMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,38 +83,6 @@ namespace backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Bars");
-                });
-
-            modelBuilder.Entity("backend.Models.BarInRoute", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BarId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsLast")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("RouteId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BarId");
-
-                    b.HasIndex("RouteId");
-
-                    b.ToTable("BarsInRoute");
                 });
 
             modelBuilder.Entity("backend.Models.BlackjackProfile", b =>
@@ -349,25 +320,6 @@ namespace backend.Migrations
                     b.ToTable("Reservations");
                 });
 
-            modelBuilder.Entity("backend.Models.Route", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Routes");
-                });
-
             modelBuilder.Entity("backend.Models.Table", b =>
                 {
                     b.Property<int>("Id")
@@ -473,25 +425,6 @@ namespace backend.Migrations
                         .HasForeignKey("TablesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("backend.Models.BarInRoute", b =>
-                {
-                    b.HasOne("backend.Models.Bar", "Bar")
-                        .WithMany()
-                        .HasForeignKey("BarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("backend.Models.Route", "Route")
-                        .WithMany("Bars")
-                        .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bar");
-
-                    b.Navigation("Route");
                 });
 
             modelBuilder.Entity("backend.Models.CocktailRecipe", b =>
@@ -624,11 +557,6 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.CocktailRecipe", b =>
                 {
                     b.Navigation("RecipeIngredients");
-                });
-
-            modelBuilder.Entity("backend.Models.Route", b =>
-                {
-                    b.Navigation("Bars");
                 });
 
             modelBuilder.Entity("backend.Models.TasteProfile", b =>

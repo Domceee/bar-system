@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import * as api from "../api/userApi";
 import type { TasteQuestion } from "../types/taste";
 
-const USER_ID = 1;
+const USER_ID = 99999;
 
 type Stage =
   | { kind: "loading" }
