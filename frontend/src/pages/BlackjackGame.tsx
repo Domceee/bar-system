@@ -96,6 +96,19 @@ export default function BlackjackGame() {
     }
   }
 
+  function playDealerTurn(currentDeck: Card[], currentDealerCards: Card[]) {
+    const nextDeck = [...currentDeck];
+    let dCards = currentDealerCards.map(c => ({ ...c, faceDown: false }));
+
+    while (handValue(dCards) < 17) {
+      const next = nextDeck.pop();
+      if (!next) break;
+      dCards = [...dCards, { ...next, faceDown: false }];
+    }
+
+    return { nextDeck, dCards };
+  }
+
   function hit() {
     const newDeck = [...deck];
     const card = newDeck.pop()!;
@@ -103,24 +116,22 @@ export default function BlackjackGame() {
     setDeck(newDeck);
     setPlayerCards(newPlayerCards);
 
-    if (handValue(newPlayerCards) >= 21) {
+    const pSum = handValue(newPlayerCards);
+    if (pSum > 21) {
       const revealed = dealerCards.map(c => ({ ...c, faceDown: false }));
       setDealerCards(revealed);
       finishGame(newPlayerCards, revealed, bet);
+    } else if (pSum === 21) {
+      const { nextDeck, dCards } = playDealerTurn(newDeck, dealerCards);
+      setDeck(nextDeck);
+      setDealerCards(dCards);
+      finishGame(newPlayerCards, dCards, bet);
     }
   }
 
   function stand() {
-    let currentDeck = [...deck];
-    let dCards = dealerCards.map(c => ({ ...c, faceDown: false }));
-
-    while (handValue(dCards) < 17) {
-      const next = currentDeck.pop();
-      if (!next) break;
-      dCards = [...dCards, { ...next, faceDown: false }];
-    }
-
-    setDeck(currentDeck);
+    const { nextDeck, dCards } = playDealerTurn(deck, dealerCards);
+    setDeck(nextDeck);
     setDealerCards(dCards);
     finishGame(playerCards, dCards, bet);
   }
