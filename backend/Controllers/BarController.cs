@@ -10,7 +10,7 @@ namespace backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BarController(IBarService barService, GoogleMapsInterface googleMaps, AppDbContext db) : ControllerBase
+public class BarController(IBarService barService, GoogleMapsInterface googleMaps, AppDbContext db, IUserService userService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetBars() =>
@@ -110,11 +110,7 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
 
         foreach (var userId in dto.UserIds)
         {
-            var profile = await db.TasteProfiles
-                .Include(p => p.Answers)
-                .Where(p => p.UserId == userId)
-                .OrderByDescending(p => p.CreatedAt)
-                .FirstOrDefaultAsync();
+            var profile = await userService.getUserTasteProfile(userId);
 
             if (profile is null) continue;
 

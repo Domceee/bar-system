@@ -73,4 +73,11 @@ public class UserService(AppDbContext db) : IUserService
 
     public async Task<bool> openSurveyForm(int userId) =>
         !await db.TasteProfiles.AnyAsync(p => p.UserId == userId);
+
+    public async Task<TasteProfile?> getUserTasteProfile(int userId) =>
+        await db.TasteProfiles
+            .Include(p => p.Answers)
+            .Where(p => p.UserId == userId)
+            .OrderByDescending(p => p.CreatedAt)
+            .FirstOrDefaultAsync();
 }

@@ -26,6 +26,7 @@ export default function BarRoutePage() {
   const [phase, setPhase] = useState<Phase>('select');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   useEffect(() => {
     fetchFriends(USER_ID).then(setFriends).catch(() => {});
@@ -185,12 +186,28 @@ export default function BarRoutePage() {
           {error && <p className="rp-error">{error}</p>}
 
           <div className="rp-actions">
-            <button className="btn--secondary" onClick={() => cancelRoute_(route.id)}>Cancel</button>
+            <button className="btn btn--ghost" onClick={() => setShowCancelConfirm(true)}>Cancel</button>
             <button className="btn--primary-lg" onClick={() => startRoute_(route.id)} disabled={loading}>
               {loading ? 'Starting…' : 'Start Route'}
             </button>
           </div>
         </div>
+
+          {showCancelConfirm && (
+            <div className="confirm-overlay">
+              <div className="confirm-dialog">
+                <p className="confirm-dialog__text">Cancel this route?</p>
+                <div className="confirm-dialog__actions">
+                  <button className="btn btn--delete" onClick={() => { setShowCancelConfirm(false); cancelRoute_(route.id); }}>
+                    Yes, cancel
+                  </button>
+                  <button className="btn btn--ghost" onClick={() => setShowCancelConfirm(false)}>
+                    Go back
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
       </div>
     );
   }
