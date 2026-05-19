@@ -73,4 +73,30 @@ public class UserService(AppDbContext db) : IUserService
 
     public async Task<bool> openSurveyForm(int userId) =>
         !await db.TasteProfiles.AnyAsync(p => p.UserId == userId);
+
+    public async Task<TasteProfileResponse?> fetchTasteProfile(int userId)
+    {
+        var profile = await db.TasteProfiles
+            .Include(p => p.Answers)
+            .Where(p => p.UserId == userId)
+            .OrderByDescending(p => p.CreatedAt)
+            .FirstOrDefaultAsync();
+
+        if (profile is null) return null;
+
+        return new TasteProfileResponse(
+            profile.Id,
+            profile.UserId,
+            profile.CreatedAt,
+            profile.Answers.Select(a => new TasteAnswerDto(a.QuestionKey, a.Answer)).ToList());
+    }
+
+    public async Task<bool> delete(int userId)
+    {
+        var profiles = await db.TasteProfiles.Where(p => p.UserId == userId).ToListAsync();
+        if (profiles.Count == 0) return false;
+        db.TasteProfiles.RemoveRange(profiles);
+        await db.SaveChangesAsync();
+        return true;
+    }
 }

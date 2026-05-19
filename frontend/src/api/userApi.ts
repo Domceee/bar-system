@@ -29,3 +29,14 @@ export const submit = (
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),
   }).then(handleResponse<TasteProfileResponse>);
+
+export const fetchTasteProfile = (userId: number): Promise<TasteProfileResponse> =>
+  fetch(`${BASE}/${userId}/taste-profile`).then(handleResponse<TasteProfileResponse>);
+
+export const deleteTasteProfile = async (userId: number): Promise<void> => {
+  const res = await fetch(`${BASE}/${userId}/taste-profile`, { method: 'DELETE' });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || res.statusText);
+  }
+};

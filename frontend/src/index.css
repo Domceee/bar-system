@@ -796,3 +796,21 @@ body { min-height: 100vh; }
   font-size: 14px;
   margin-bottom: 16px;
 }
+
+/* ── Taste Page ──────────────────────────────────────────── */
+.taste-page__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.taste-page__btn {
+  width: 100%;
+  justify-content: center;
+  padding: 12px 18px;
+  font-size: 14px;
+}
+
+.btn--action {
+  padding: 9px 18px;
+}

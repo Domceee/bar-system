@@ -45,6 +45,12 @@ export default function MainPage() {
           Cocktail Recipes
         </button>
         <button
+          className="btn--primary-lg"
+          onClick={() => navigate("/taste")}
+        >
+          Taste Profile
+        </button>
+        <button
           className="btn--primary-lg btn--primary-lg--green"
           onClick={() => navigate("/blackjack")}
         >

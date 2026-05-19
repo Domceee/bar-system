@@ -10,6 +10,14 @@ public class Reservation
     public Bar Bar { get; set; } = null!;
     public List<Table> Tables { get; set; } = [];
 
+    public Reservation(Bar bar, int guestCount, DateTime date, string status)
+    {
+        BarId = bar.Id;
+        GuestCount = guestCount;
+        Date = date;
+        Status = status;
+    }
+
     public void UpdateStatus(string status) => Status = status;
 
     public static Reservation Create(int barId, int guestCount, DateTime date, string status) =>

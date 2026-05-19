@@ -9,4 +9,6 @@ public interface IUserService
     TasteQuestionDto? nextQuestion(int index);
     Task<TasteProfileResponse?> submit(int userId, SubmitTasteProfileRequest request);
     Task<bool> openSurveyForm(int userId);
+    Task<TasteProfileResponse?> fetchTasteProfile(int userId);
+    Task<bool> delete(int userId);
 }

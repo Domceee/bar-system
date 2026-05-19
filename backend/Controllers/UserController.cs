@@ -34,4 +34,18 @@ public class UserController(IUserService userService) : ControllerBase
         var surveyNeeded = await userService.openSurveyForm(userId);
         return Ok(new { surveyNeeded });
     }
+
+    [HttpGet("{userId:int}/taste-profile")]
+    public async Task<IActionResult> fetchTasteProfile(int userId)
+    {
+        var profile = await userService.fetchTasteProfile(userId);
+        return profile is null ? NotFound() : Ok(profile);
+    }
+
+    [HttpDelete("{userId:int}/taste-profile")]
+    public async Task<IActionResult> delete(int userId)
+    {
+        var deleted = await userService.delete(userId);
+        return deleted ? Ok() : NotFound();
+    }
 }
