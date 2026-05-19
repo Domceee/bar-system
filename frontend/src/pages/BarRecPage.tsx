@@ -51,10 +51,11 @@ export default function BarRecPage() {
         distanceMeters,
       );
     } catch (e) {
-      // (13-14)
+      // (13-14) ir (24-25)
       displayError(e instanceof Error ? e.message : "Failed to fetch bars.");
     }
 
+    // response within-distance
     const allBarsEvaluated = checkAllBarsEvaluated(response);
 
     if (allBarsEvaluated === false && response !== null) {

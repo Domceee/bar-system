@@ -54,6 +54,7 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
 
         if (!analyzeCode(response))
         {
+            // (13-14)
             return BadRequest(new { status = response.Status });
         }
 
@@ -72,6 +73,7 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
 
             if (iterations == 10)
             {
+                // (24-25)
                 return BadRequest(new { status = "MAX_ITERATIONS_REACHED" });
             }
         }
@@ -99,6 +101,7 @@ public class BarController(IBarService barService, GoogleMapsInterface googleMap
             .Select(s => new DbBarDto(s.Bar.Id, s.Bar.Name, s.Bar.XCoord, s.Bar.YCoord, s.Bar.Rating, s.Bar.Design.ToString(), s.Priority))
             .ToList();
 
+        // response within-distance
         return Ok(response with { DbBars = dbBars });
     }
 

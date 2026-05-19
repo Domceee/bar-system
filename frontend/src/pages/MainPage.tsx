@@ -28,10 +28,12 @@ export default function MainPage() {
         <h1 className="main-page__title">
           Bar<span>System</span>
         </h1>
-        <p className="main-page__sub">venue management</p>
       </div>
       <div className="main-page__nav">
-        <button className="btn--primary-lg" onClick={() => navigate("/bars")}>
+        <button
+          className="btn--primary-lg"
+          onClick={() => navigate("/bars")}
+        >
           Open Bars
         </button>
         <button
