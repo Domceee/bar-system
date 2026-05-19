@@ -29,6 +29,9 @@ builder.Services.AddScoped<IBlackjackService, BlackjackService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<ICocktailRecipeService, CocktailRecipeService>();
+builder.Services.AddScoped<IFriendService, FriendService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IRouteService, RouteService>();
 builder.Services.AddHttpClient<OpenWeatherInterface>();
 builder.Services.AddHttpClient<GoogleMapsInterface>();
 
@@ -43,11 +46,92 @@ using (var scope = app.Services.CreateScope())
 
     if (!db.Users.Any())
     {
-        db.Users.Add(new User { Username = "test" });
+        db.Users.AddRange(
+            new User { Id = 1,     Username = "test" },
+            new User { Id = 2,     Username = "alice" },
+            new User { Id = 3,     Username = "bob" },
+            new User { Id = 4,     Username = "carol" },
+            new User { Id = 99999, Username = "me" }
+        );
         db.SaveChanges();
     }
 
-    if (!db.Bars.Any())
+    if (!db.TasteProfiles.Any())
+    {
+        db.TasteProfiles.AddRange(
+            new TasteProfile
+            {
+                UserId = 1,
+                Answers =
+                [
+                    new TasteAnswer { QuestionKey = "budget",         Answer = "$5-10" },
+                    new TasteAnswer { QuestionKey = "drink_type",     Answer = "Beer" },
+                    new TasteAnswer { QuestionKey = "flavor_profile", Answer = "Herbal" },
+                    new TasteAnswer { QuestionKey = "bar_distance",   Answer = "1-5 km" },
+                    new TasteAnswer { QuestionKey = "bar_rating",     Answer = "3 stars" },
+                    new TasteAnswer { QuestionKey = "bar_design",     Answer = "Vintage" },
+                    new TasteAnswer { QuestionKey = "flavor_balance", Answer = "Bitter" },
+                    new TasteAnswer { QuestionKey = "drink_strength", Answer = "Light" },
+                    new TasteAnswer { QuestionKey = "atmosphere",     Answer = "Lively chatter" },
+                    new TasteAnswer { QuestionKey = "seating",        Answer = "Indoor" },
+                ]
+            },
+            new TasteProfile
+            {
+                UserId = 2,
+                Answers =
+                [
+                    new TasteAnswer { QuestionKey = "budget",         Answer = "$15-25" },
+                    new TasteAnswer { QuestionKey = "drink_type",     Answer = "Cocktail" },
+                    new TasteAnswer { QuestionKey = "flavor_profile", Answer = "Fruity" },
+                    new TasteAnswer { QuestionKey = "bar_distance",   Answer = "Any distance" },
+                    new TasteAnswer { QuestionKey = "bar_rating",     Answer = "4 stars" },
+                    new TasteAnswer { QuestionKey = "bar_design",     Answer = "Luxurious" },
+                    new TasteAnswer { QuestionKey = "flavor_balance", Answer = "Sweet" },
+                    new TasteAnswer { QuestionKey = "drink_strength", Answer = "Medium" },
+                    new TasteAnswer { QuestionKey = "atmosphere",     Answer = "Music & dancing" },
+                    new TasteAnswer { QuestionKey = "seating",        Answer = "Outdoor patio" },
+                ]
+            },
+            new TasteProfile
+            {
+                UserId = 3,
+                Answers =
+                [
+                    new TasteAnswer { QuestionKey = "budget",         Answer = "$10-15" },
+                    new TasteAnswer { QuestionKey = "drink_type",     Answer = "Shot" },
+                    new TasteAnswer { QuestionKey = "flavor_profile", Answer = "Smoky" },
+                    new TasteAnswer { QuestionKey = "bar_distance",   Answer = "1-5 km" },
+                    new TasteAnswer { QuestionKey = "bar_rating",     Answer = "4 stars" },
+                    new TasteAnswer { QuestionKey = "bar_design",     Answer = "Cozy" },
+                    new TasteAnswer { QuestionKey = "flavor_balance", Answer = "Bitter" },
+                    new TasteAnswer { QuestionKey = "drink_strength", Answer = "Strong" },
+                    new TasteAnswer { QuestionKey = "atmosphere",     Answer = "Quiet & relaxed" },
+                    new TasteAnswer { QuestionKey = "seating",        Answer = "Bar counter" },
+                ]
+            },
+            new TasteProfile
+            {
+                UserId = 4,
+                Answers =
+                [
+                    new TasteAnswer { QuestionKey = "budget",         Answer = "$10-15" },
+                    new TasteAnswer { QuestionKey = "drink_type",     Answer = "Wine" },
+                    new TasteAnswer { QuestionKey = "flavor_profile", Answer = "Sweet" },
+                    new TasteAnswer { QuestionKey = "bar_distance",   Answer = "5-15 km" },
+                    new TasteAnswer { QuestionKey = "bar_rating",     Answer = "4 stars" },
+                    new TasteAnswer { QuestionKey = "bar_design",     Answer = "Modern" },
+                    new TasteAnswer { QuestionKey = "flavor_balance", Answer = "Sour" },
+                    new TasteAnswer { QuestionKey = "drink_strength", Answer = "Medium" },
+                    new TasteAnswer { QuestionKey = "atmosphere",     Answer = "Quiet & relaxed" },
+                    new TasteAnswer { QuestionKey = "seating",        Answer = "Outdoor patio" },
+                ]
+            }
+        );
+        db.SaveChanges();
+    }
+
+        if (!db.Bars.Any())
     {
         var bars = new List<Bar>
         {
@@ -206,7 +290,13 @@ using (var scope = app.Services.CreateScope())
             new Table { BarId = bars[0].Id, SeatCount = 4, Status = "available", IsOutside = false },
             new Table { BarId = bars[0].Id, SeatCount = 4, Status = "available", IsOutside = true },
             new Table { BarId = bars[1].Id, SeatCount = 2, Status = "available", IsOutside = false },
-            new Table { BarId = bars[1].Id, SeatCount = 6, Status = "available", IsOutside = false }
+            new Table { BarId = bars[1].Id, SeatCount = 6, Status = "available", IsOutside = false },
+            new Table { BarId = bars[2].Id, SeatCount = 2, Status = "available", IsOutside = false },
+            new Table { BarId = bars[2].Id, SeatCount = 4, Status = "available", IsOutside = false },
+            new Table { BarId = bars[3].Id, SeatCount = 2, Status = "available", IsOutside = false },
+            new Table { BarId = bars[3].Id, SeatCount = 4, Status = "available", IsOutside = true },
+            new Table { BarId = bars[4].Id, SeatCount = 2, Status = "available", IsOutside = false },
+            new Table { BarId = bars[4].Id, SeatCount = 6, Status = "available", IsOutside = true }
         );
         db.SaveChanges();
     }

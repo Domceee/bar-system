@@ -99,4 +99,11 @@ public class UserService(AppDbContext db) : IUserService
         await db.SaveChangesAsync();
         return true;
     }
+
+    public async Task<TasteProfile?> getUserTasteProfile(int userId) =>
+        await db.TasteProfiles
+            .Include(p => p.Answers)
+            .Where(p => p.UserId == userId)
+            .OrderByDescending(p => p.CreatedAt)
+            .FirstOrDefaultAsync();
 }

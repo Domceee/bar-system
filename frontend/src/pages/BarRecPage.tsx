@@ -8,7 +8,7 @@ import type {
   NearbyBar,
 } from "../types/barRec";
 
-const USER_ID = 1;
+const USER_ID = 99999;
 const USER_LAT = 54.8985;
 const USER_LON = 23.9036;
 const INITIAL_DISTANCE_METERS = 10000;
@@ -51,10 +51,11 @@ export default function BarRecPage() {
         distanceMeters,
       );
     } catch (e) {
-      // (13-14)
+      // (13-14) ir (24-25)
       displayError(e instanceof Error ? e.message : "Failed to fetch bars.");
     }
 
+    // response within-distance
     const allBarsEvaluated = checkAllBarsEvaluated(response);
 
     if (allBarsEvaluated === false && response !== null) {

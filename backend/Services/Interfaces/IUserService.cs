@@ -11,4 +11,5 @@ public interface IUserService
     Task<bool> openSurveyForm(int userId);
     Task<TasteProfileResponse?> fetchTasteProfile(int userId);
     Task<bool> delete(int userId);
+    Task<TasteProfile?> getUserTasteProfile(int userId);
 }

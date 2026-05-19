@@ -11,6 +11,83 @@ namespace backend.Controllers;
 [Route("api/[controller]")]
 public class ReservationController(AppDbContext db, OpenWeatherInterface openWeather, GoogleMapsInterface googleMap) : ControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> OpenReservations()
+    {
+        var reservations = await db.Reservations
+            .Include(r => r.Bar)
+            .Include(r => r.Tables)
+            .ToListAsync();
+
+        return Ok(reservations.Select(ToListItemDto));
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteReservation(int id)
+    {
+        var reservation = await db.Reservations
+            .Include(r => r.Bar)
+            .Include(r => r.Tables)
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (reservation is null) return NotFound();
+
+        var state = reservation.CheckState();
+
+        if (state == "ended")
+        {
+            db.Reservations.Remove(reservation);
+            await db.SaveChangesAsync();
+
+            var all = await db.Reservations.Include(r => r.Bar).Include(r => r.Tables).ToListAsync();
+            return Ok(new ReservationResponseDto("deleted", null, all.Select(ToListItemDto).ToList()));
+        }
+
+        if (state == "active")
+            return BadRequest(new ReservationResponseDto("active", "Cannot delete active reservation", null));
+
+        reservation.ChangeState();
+        foreach (var table in reservation.Tables)
+            table.FreeTable();
+        await db.SaveChangesAsync();
+
+        return Ok(new ReservationResponseDto("cancelled", "Successfully cancelled reservation", null));
+    }
+
+    [HttpPut("{id}/cancel")]
+    public async Task<IActionResult> CancelReservation(int id)
+    {
+        var reservation = await db.Reservations
+            .Include(r => r.Tables)
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (reservation is null) return NotFound();
+
+        reservation.ChangeState();
+        foreach (var table in reservation.Tables)
+            table.FreeTable();
+        await db.SaveChangesAsync();
+
+        return Ok(new ReservationResponseDto("cancelled", "Successfully cancelled reservation", null));
+    }
+
+    [HttpPut("{id}/end")]
+    public async Task<IActionResult> EndReservation(int id)
+    {
+        var reservation = await db.Reservations
+            .Include(r => r.Tables)
+            .FirstOrDefaultAsync(r => r.Id == id);
+
+        if (reservation is null) return NotFound();
+
+        reservation.ChangeToEnded();
+        foreach (var table in reservation.Tables)
+            table.FreeTable();
+        await db.SaveChangesAsync();
+
+        return Ok(new ReservationResponseDto("ended", "Successfully ended reservation", null));
+    }
+
     [HttpPost("submit")]
     public async Task<IActionResult> Submit([FromBody] ReservationFormDto dto)
     {
@@ -30,7 +107,11 @@ public class ReservationController(AppDbContext db, OpenWeatherInterface openWea
                     return Ok(new ReservationProposalDto("barClosed", null, null, null, null));
 
                 var openBars = allBars.Where(b => IsWorking(b, dto.Date)).ToList();
-                bar = await googleMap.FindNearestBar(dto.UserLat, dto.UserLon, openBars);
+                var nearestBars = openBars
+                    .OrderBy(b => Math.Pow(b.XCoord - dto.UserLat, 2) + Math.Pow(b.YCoord - dto.UserLon, 2))
+                    .Take(25)
+                    .ToList();
+                bar = await googleMap.FindNearestBar(dto.UserLat, dto.UserLon, nearestBars);
                 if (bar is null)
                     return Ok(new ReservationProposalDto("error", null, null, null, "Could not find nearest bar"));
             }
@@ -75,18 +156,14 @@ public class ReservationController(AppDbContext db, OpenWeatherInterface openWea
     [HttpPost("confirm")]
     public async Task<IActionResult> Confirm([FromBody] ConfirmReservationDto dto)
     {
-        var reservation = Reservation.Create(dto.BarId, dto.GuestCount, DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc), "pending");
-
         var tables = await db.Tables.Where(t => dto.TableIds.Contains(t.Id)).ToListAsync();
-        reservation.Tables = tables;
-
-        db.Reservations.Add(reservation);
+        foreach (var table in tables)
+            table.UpdateStatus("reserved");
         await db.SaveChangesAsync();
 
-        reservation.UpdateStatus("confirmed");
-        foreach (var table in tables)
-            table.Status = "reserved";
-
+        var reservation = Reservation.Create(dto.BarId, dto.GuestCount, DateTime.SpecifyKind(dto.Date, DateTimeKind.Utc), "confirmed");
+        reservation.Tables = tables;
+        db.Reservations.Add(reservation);
         await db.SaveChangesAsync();
 
         string? weather = null;
@@ -140,4 +217,7 @@ public class ReservationController(AppDbContext db, OpenWeatherInterface openWea
 
     private static BarDto ToDto(Bar b) =>
         new(b.Id, b.Name, b.XCoord, b.YCoord, b.Rating, b.Address, b.OpenTime, b.CloseTime, b.Design, b.Atmosphere, b.Seating);
+
+    private static ReservationListItemDto ToListItemDto(Reservation r) =>
+        new(r.Id, r.BarId, r.Bar.Name, r.GuestCount, r.Date, r.Status, r.Tables.Select(t => t.Id).ToList());
 }

@@ -19,6 +19,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<CocktailRecipe> CocktailRecipes => Set<CocktailRecipe>();
     public DbSet<RecipeIngredient> RecipeIngredients => Set<RecipeIngredient>();
 
+    public DbSet<Friend> Friends => Set<Friend>();
+    public DbSet<Message> Messages => Set<Message>();
+
+    public DbSet<backend.Models.Route> Routes => Set<backend.Models.Route>();
+    public DbSet<BarInRoute> BarsInRoute => Set<BarInRoute>();
+
     protected override void OnModelCreating(ModelBuilder mb)
     {
         mb.Entity<Reservation>().HasMany(r => r.Tables).WithMany(t => t.Reservations);
@@ -62,5 +68,41 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             .WithMany()
             .HasForeignKey(ri => ri.IngredientId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        mb.Entity<Friend>()
+            .HasOne(f => f.Requester)
+            .WithMany()
+            .HasForeignKey(f => f.RequesterId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        mb.Entity<Friend>()
+            .HasOne(f => f.Addressee)
+            .WithMany()
+            .HasForeignKey(f => f.AddresseeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        mb.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany()
+            .HasForeignKey(m => m.SenderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        mb.Entity<Message>()
+            .HasOne(m => m.Receiver)
+            .WithMany()
+            .HasForeignKey(m => m.ReceiverId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        mb.Entity<BarInRoute>()
+            .HasOne(b => b.Route)
+            .WithMany(r => r.Bars)
+            .HasForeignKey(b => b.RouteId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        mb.Entity<BarInRoute>()
+            .HasOne(b => b.Bar)
+            .WithMany()
+            .HasForeignKey(b => b.BarId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
